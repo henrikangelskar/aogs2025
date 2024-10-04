@@ -19,7 +19,6 @@
         variant="solo"
         class="custom-text-field"
         @keyup.enter="checkCode"
-        hide-details
         autocomplete="off"
         :error="error"
         :error-messages="errorMessage"
@@ -52,7 +51,7 @@ onMounted(() => {
 });
 
 function checkCode() {
-  if (code.value === "aogs25") {
+  if (code.value === "aogs2025") {
     isLoggedIn.value = true;
     localStorage.setItem("isLoggedIn", "true");
   } else {
