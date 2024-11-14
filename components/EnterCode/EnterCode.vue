@@ -51,12 +51,12 @@ onMounted(() => {
 });
 
 function checkCode() {
-  if (code.value === "aogs2025") {
+  if (code.value.toLowerCase() === "aogs2025") {
     isLoggedIn.value = true;
     localStorage.setItem("isLoggedIn", "true");
   } else {
     error.value = true;
-    errorMessage.value = "Fel kod. Försök igen."; // Display error in Swedish
+    errorMessage.value = "Fel kod. Försök igen.";
   }
 }
 </script>
