@@ -17,17 +17,20 @@
         v-model="code"
         label="Ange kod"
         variant="solo"
-        class="custom-text-field"
+        class="custom-input rounded-0"
         @keyup.enter="checkCode"
         autocomplete="off"
         :error="error"
         :error-messages="errorMessage"
         min-width="300"
+        style="border-radius: 0 !important"
       />
+
       <v-btn
         variant="outlined"
         color="white"
         size="large"
+        style="border-radius: 0px"
         @click="checkCode"
         class="mt-4"
         min-width="300"
