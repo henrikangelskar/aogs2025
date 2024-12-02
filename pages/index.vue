@@ -2,18 +2,15 @@
   <div>
     <LoadingBig v-if="loading" />
 
-    <div v-else>
-      <CustomContainer>
-        <v-img src="/aogs2025.png" height="480"></v-img>
-      </CustomContainer>
+    <div style="background: #2501ec; min-height: 100vh" v-else>
       <v-sheet color="#2501ec">
         <CustomContainer size="m">
+          <v-img src="/aogs2025_2.png" height="480"></v-img>
+
           <RSVP />
         </CustomContainer>
       </v-sheet>
-      <CustomContainer size="m">
-        <CountDown />
-      </CustomContainer>
+
       <EnterCode />
     </div>
   </div>

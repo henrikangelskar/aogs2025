@@ -1,5 +1,8 @@
 <template>
-  <v-container :style="{ maxWidth: containerWidth }" class="mx-auto pa-0">
+  <v-container
+    :style="{ maxWidth: containerWidth }"
+    class="mx-auto height-custom pa-0"
+  >
     <slot></slot>
   </v-container>
 </template>
@@ -32,5 +35,8 @@ const containerWidth = computed(() => {
 </script>
 
 <style scoped>
-/* Additional custom styles can be added here if needed */
+.custom-height {
+  height: 100vh;
+  background: #2501ec;
+}
 </style>
