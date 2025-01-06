@@ -8,6 +8,8 @@
           <v-img src="/aogs2025_2.png" height="280"></v-img>
 
           <RSVP />
+
+          <CountDown />
         </CustomContainer>
       </v-sheet>
 
