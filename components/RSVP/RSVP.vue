@@ -1,9 +1,7 @@
 <template>
   <div>
     <!-- Hero Header -->
-    <div
-      class="relative h-full object-cover min-h-[300px] max-h-[500px] overflow-hidden"
-    >
+    <div class="relative h-full object-cover max-h-[500px] overflow-hidden">
       <img
         src="/public/lines.jpg"
         alt="Drink"

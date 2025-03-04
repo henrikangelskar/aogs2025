@@ -2,26 +2,26 @@
   <div>
     <!-- Hero Section -->
     <div
-      class="relative h-full object-cover min-h-[300px] max-h-[500px] overflow-hidden"
+      class="relative w-full min-h-[300px] md:min-h-[400px] lg:min-h-[500px] overflow-hidden"
     >
       <img
         src="/public/drink.png"
         alt="Drink"
-        class="w-full h-full object-cover"
+        class="absolute inset-0 w-full h-full object-cover object-center"
       />
       <!-- Overlay to darken the image -->
       <div class="absolute inset-0 bg-black opacity-30"></div>
       <!-- Text container on top of the overlay -->
       <div
-        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10"
+        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10 text-center"
       >
         <h1
-          class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2 mt-6 text-center"
+          class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
         >
           Schema
         </h1>
         <p
-          class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display mb-2 text-center"
+          class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
         >
           Hur dagen kommer att se ut för bröllopet
         </p>
@@ -30,7 +30,6 @@
 
     <!-- Content Section -->
     <section class="w-full white py-8">
-      <!-- Centered white box with a max width -->
       <div class="max-w-4xl mx-auto p-6">
         <div class="space-y-6 text-gray-700 playfair-display text-lg">
           <!-- Friday Section -->
@@ -71,7 +70,3 @@
     </section>
   </div>
 </template>
-
-<script setup>
-// No additional logic needed.
-</script>

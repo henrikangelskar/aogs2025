@@ -1,27 +1,27 @@
 <template>
   <div>
-    <!-- Hero Section -->
+    <!-- Hero Section (Fixed Cropping & Full Cover) -->
     <div
-      class="relative h-full object-cover min-h-[300px] max-h-[500px] overflow-hidden"
+      class="relative w-full min-h-[300px] md:min-h-[400px] lg:min-h-[500px] overflow-hidden"
     >
       <img
         src="/public/church.png"
-        alt="Drink"
-        class="w-full h-full object-cover"
+        alt="Church"
+        class="absolute inset-0 w-full h-full object-cover object-center"
       />
       <!-- Overlay to darken the image -->
       <div class="absolute inset-0 bg-black opacity-30"></div>
       <!-- Text container on top of the overlay -->
       <div
-        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10"
+        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10 text-center"
       >
         <h1
-          class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2 mt-6 text-center"
+          class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
         >
           Destination
         </h1>
         <p
-          class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display mb-2 text-center"
+          class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
         >
           Hur man tar sig till bröllopet
         </p>
@@ -36,12 +36,12 @@
             Transport på bröllopsdagen
           </h2>
           <p class="text-sm md:text-md lg:text-lg mb-2 playfair-display mb-4">
-            <strong>Till kyrkan: </strong>
-            <span class="text-2xl playfair-display font-bold"
-              >Du ordnar själv</span
+            <strong>Till kyrkan: </strong> Du
+            <span class="playfair-display font-bold"
+              >ordnar själv transport</span
             >
-            transport till Ingarö kyrka. Adressen är Ingarö kyrkväg, 134 60
-            Ingarö, Sverige.
+            till Ingarö kyrka. Adressen är Ingarö kyrkväg, 134 60 Ingarö,
+            Sverige.
           </p>
           <div>
             <a

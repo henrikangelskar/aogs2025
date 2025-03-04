@@ -21,7 +21,7 @@
           SCHEMA
         </NuxtLink>
         <NuxtLink to="/destination" class="text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md text-center playfair-display">
-          RESE
+          RESA
         </NuxtLink>
         <NuxtLink to="/rsvp" class="text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md text-center playfair-display">
           RSVP
