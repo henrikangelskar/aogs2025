@@ -1,32 +1,50 @@
 <template>
-  <v-container class="text-center" fluid>
-    <v-row class="mb-4 justify-center align-center">
-      <v-col
-        cols="3"
-        v-for="(unit, label) in timeUnits"
-        :key="label"
-        class="d-flex flex-column align-center"
+  <div class="relative w-full min-h-[360px]">
+    <!-- Background image positioned absolutely so it covers the container -->
+    <img
+      src="/public/clock.png"
+      alt="Clock Background"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <!-- Optional overlay -->
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <!-- Countdown content (set as relative so it stacks above the background) -->
+    <div class="relative flex flex-col items-center justify-center p-4 sm:p-10">
+      <!-- Grid layout: 2 columns on smaller screens, 4 columns on bigger screens -->
+      <div
+        class="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-center items-center mb-4 py-6"
       >
-        <div elevation="2" class="pa-4 rounded-lg">
-          <span class="display-4 fancy-font" style="font-size: 42px">
-            {{ unit }}
+        <div
+          v-for="(unit, label) in timeUnits"
+          :key="label"
+          class="flex flex-col items-center"
+        >
+          <div class="p-2 sm:p-6">
+            <span
+              class="text-5xl sm:text-7xl text-white font-bold playfair-display"
+            >
+              {{ unit }}
+            </span>
+          </div>
+          <span
+            class="mt-2 font-semibold text-white playfair-display text-base sm:text-lg"
+          >
+            {{ label }}
           </span>
         </div>
-        <span class="mt-2 fancy-font">{{ label }}</span>
-      </v-col>
-    </v-row>
-  </v-container>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import confetti from "canvas-confetti";
 
-// Set the target date to August 16th of this year, or next year if the date has already passed
 const now = new Date();
-const targetDate = new Date(now.getFullYear(), 7, 16); // Months are 0-indexed, so 7 is August
+const targetDate = new Date(now.getFullYear(), 7, 16);
 if (now > targetDate) {
-  targetDate.setFullYear(targetDate.getFullYear() + 1); // Move to next year if the date has passed
+  targetDate.setFullYear(targetDate.getFullYear() + 1);
 }
 
 const timeUnits = ref({
@@ -37,9 +55,9 @@ const timeUnits = ref({
 });
 
 function launchConfetti() {
-  const duration = 3000; // 3 seconds
+  const duration = 3000;
   const animationEnd = Date.now() + duration;
-  const colors = ["#FFC0CB", "#FFD700", "#FFFACD", "#E6E6FA", "#FF69B4"]; // Wedding colors
+  const colors = ["#FFC0CB", "#FFD700", "#FFFACD", "#E6E6FA", "#FF69B4"];
 
   function frame() {
     confetti({
@@ -53,7 +71,7 @@ function launchConfetti() {
       },
       colors: colors,
       shapes: ["circle"],
-      scalar: 1.2, // Increase size of confetti pieces
+      scalar: 1.2,
     });
 
     if (Date.now() < animationEnd) {
@@ -92,8 +110,8 @@ function updateCountdown() {
       Minuter: "00",
       Sekunder: "00",
     };
-    launchConfetti(); // Trigger confetti when countdown reaches zero
-    clearInterval(countdownInterval); // Stop the countdown
+    launchConfetti();
+    clearInterval(countdownInterval);
   }
 }
 
@@ -108,9 +126,3 @@ onUnmounted(() => {
   clearInterval(countdownInterval);
 });
 </script>
-
-<style scoped>
-.display-4 {
-  font-weight: bold;
-}
-</style>

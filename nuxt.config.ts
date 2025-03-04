@@ -1,15 +1,7 @@
 import { defineNuxtConfig } from "nuxt/config";
 
 export default defineNuxtConfig({
-  css: [
-    "vuetify/lib/styles/main.sass",
-    "@/assets/css/main.css",
-    "@mdi/font/css/materialdesignicons.min.css",
-  ],
-
-  build: {
-    transpile: ["vuetify"],
-  },
+  css: ["@/assets/css/main.css", "@mdi/font/css/materialdesignicons.min.css"],
 
   vite: {
     define: {
@@ -28,4 +20,6 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: "2024-10-04",
+
+  modules: ["@nuxtjs/tailwindcss"],
 });
