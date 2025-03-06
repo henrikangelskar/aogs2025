@@ -2,30 +2,18 @@
   <div>
     <!-- Hero Section (Fixed Cropping & Full Cover) -->
     <div
-      class="relative w-full min-h-[300px] md:min-h-[400px] lg:min-h-[500px] overflow-hidden"
+      class="relative w-full h-[400px] bg-[#2501ec] flex flex-col items-center justify-center items-center p-4 sm:p-10 text-center"
     >
-      <img
-        src="/public/church.png"
-        alt="Church"
-        class="absolute inset-0 w-full h-full object-cover object-center"
-      />
-      <!-- Overlay to darken the image -->
-      <div class="absolute inset-0 bg-black opacity-30"></div>
-      <!-- Text container on top of the overlay -->
-      <div
-        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10 text-center"
+      <h1
+        class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
       >
-        <h1
-          class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
-        >
-          Destination
-        </h1>
-        <p
-          class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
-        >
-          Hur man tar sig till bröllopet
-        </p>
-      </div>
+        Destination & resväg
+      </h1>
+      <p
+        class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
+      >
+        Hur man tar sig till bröllopet
+      </p>
     </div>
 
     <!-- Section: Transport to Church -->
@@ -37,9 +25,9 @@
           </h2>
           <p class="text-sm md:text-md lg:text-lg mb-2 playfair-display mb-4">
             <strong>Till kyrkan: </strong> Du
-            <span class="playfair-display font-bold"
-              >ordnar själv transport</span
-            >
+            <span class="playfair-display font-bold">
+              ordnar själv transport
+            </span>
             till Ingarö kyrka. Adressen är Ingarö kyrkväg, 134 60 Ingarö,
             Sverige.
           </p>
@@ -51,6 +39,13 @@
             >
               Vägbeskrivningar
             </a>
+          </div>
+          <div class="mt-6">
+            <img
+              src="/public/church.png"
+              alt="Church"
+              class="w-full h-auto rounded-lg shadow-lg"
+            />
           </div>
         </section>
       </div>

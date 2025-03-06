@@ -1,31 +1,18 @@
 <template>
   <div>
-    <!-- Hero Section -->
     <div
-      class="relative w-full min-h-[300px] md:min-h-[400px] lg:min-h-[500px] overflow-hidden"
+      class="relative w-full h-[400px] bg-[#2501ec] flex flex-col items-center justify-center items-center p-4 sm:p-10 text-center"
     >
-      <img
-        src="/public/drink.png"
-        alt="Drink"
-        class="absolute inset-0 w-full h-full object-cover object-center"
-      />
-      <!-- Overlay to darken the image -->
-      <div class="absolute inset-0 bg-black opacity-30"></div>
-      <!-- Text container on top of the overlay -->
-      <div
-        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10 text-center"
+      <h1
+        class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
       >
-        <h1
-          class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
-        >
-          Schema
-        </h1>
-        <p
-          class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
-        >
-          Hur dagen kommer att se ut för bröllopet
-        </p>
-      </div>
+        Schema
+      </h1>
+      <p
+        class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
+      >
+        Hur dagen kommer att se ut för bröllopet
+      </p>
     </div>
 
     <!-- Content Section -->

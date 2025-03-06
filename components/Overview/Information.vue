@@ -1,30 +1,21 @@
 <template>
   <div>
     <!-- Hero Section -->
+
     <div
-      class="relative h-full object-cover min-h-[300px] max-h-[500px] overflow-hidden"
+      class="relative w-full h-[400px] bg-[#2501ec] flex flex-col items-center justify-center items-center p-4 sm:p-10 text-center"
     >
-      <img
-        src="/public/waves.jpg"
-        alt="Drink"
-        class="w-full h-full object-cover"
-      />
-      <div class="absolute inset-0 bg-black opacity-40"></div>
-      <div
-        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10"
+      <h1
+        class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
       >
-        <h1
-          class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2 mt-6 text-center"
-        >
-          Amalie + Sebbe 2025
-        </h1>
-        <p
-          class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display mb-2 text-center"
-        >
-          Vi längtar efter att få fira vår bröllopsdag med er – en härlig dag i
-          den vackra svenska skärgården.
-        </p>
-      </div>
+        Amalie + Sebbe 2025
+      </h1>
+      <p
+        class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
+      >
+        Vi längtar efter att få fira vår bröllopsdag med er – en härlig dag i
+        den vackra svenska skärgården.
+      </p>
     </div>
 
     <!-- Content Sections with Alternating Backgrounds -->

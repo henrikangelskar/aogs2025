@@ -1,15 +1,7 @@
 <template>
-  <div class="relative w-full min-h-[360px]">
-    <!-- Background image positioned absolutely so it covers the container -->
-    <img
-      src="/public/clock.png"
-      alt="Clock Background"
-      class="absolute inset-0 w-full h-full object-cover"
-    />
-    <!-- Optional overlay -->
-    <div class="absolute inset-0 bg-black opacity-20"></div>
+  <div class="w-full min-h-[360px] bg-[#2501ec]">
     <!-- Countdown content (set as relative so it stacks above the background) -->
-    <div class="relative flex flex-col items-center justify-center p-4 sm:p-10">
+    <div class="flex flex-col items-center justify-center p-4 sm:p-10">
       <!-- Grid layout: 2 columns on smaller screens, 4 columns on bigger screens -->
       <div
         class="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-center items-center mb-4 py-6"

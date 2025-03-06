@@ -1,28 +1,19 @@
 <template>
   <div>
     <!-- Hero Header -->
-    <div class="relative h-full object-cover max-h-[500px] overflow-hidden">
-      <img
-        src="/public/lines.jpg"
-        alt="Drink"
-        class="w-full h-full object-cover"
-      />
-      <!-- Overlay to darken the image -->
-      <div class="absolute inset-0 bg-black opacity-10"></div>
-      <!-- Text container on top of the overlay -->
-      <div
-        class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10"
+    <div
+      class="relative w-full h-[400px] bg-[#2501ec] flex flex-col items-center justify-center items-center p-4 sm:p-10 text-center"
+    >
+      <h1
+        class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl playfair-display mb-2"
       >
-        <div>
-          <img
-            src="/public/aogs2025-remove-bg-black.png"
-            alt="AOGS 2025"
-            class="mx-auto max-h-[200px] object-contain"
-          />
-        </div>
-
-        <h1 class="text-7xl my-6 playfair-display text-black">Välkomna</h1>
-      </div>
+        Välkomna
+      </h1>
+      <p
+        class="text-white text-base sm:text-lg md:text-xl lg:text-2xl playfair-display"
+      >
+        Här kan du svara på inbjudan
+      </p>
     </div>
 
     <!-- Page Content -->
