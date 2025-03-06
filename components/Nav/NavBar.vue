@@ -13,7 +13,7 @@
       </div>
 
       <!-- Desktop Navigation (Hidden on Small Screens) -->
-      <div class="hidden md:flex space-x-4 px-">
+      <div class="hidden md:flex space-x-4">
         <NuxtLink
           to="/info"
           class="text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md text-center playfair-display"
@@ -66,8 +66,13 @@
     <!-- Mobile Menu Dropdown as an overlay -->
     <div
       v-if="isMenuOpen"
-      class="absolute top-full left-0 right-0 z-10 px-2 pb-4 pt-4 bg-white border-t border-gray-300"
+      class="absolute top-full left-0 right-0 z-10 px-2 pb-4 pt-2 bg-white border-t border-gray-300"
     >
+      <!-- Close Button -->
+      <div class="flex justify-end">
+        <button @click="toggleMenu" class="p-2">✖</button>
+      </div>
+
       <NuxtLink
         to="/info"
         class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 mb-2 hover:shadow-md playfair-display"
