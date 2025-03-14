@@ -19,11 +19,10 @@
     <!-- Page Content -->
     <div class="p-6 text-center py-20">
       <div class="max-w-2xl mx-auto">
-        <p class="mb-4 text-3xl playfair-display">
+        <p class="mb-4 text-3xl playfair-displsay">
           Du är inbjuden till Sebastian och Amalies bröllop i Stockholm, 15-17
-          Augusti. Svara gärna så snart som möjligt, men senast 31 januari. Mer
-          info kommer snart här och på mail. Vi ser fram emot att fira vår stora
-          dag med dig!
+          Augusti. Svara gärna så snart som möjligt. Mer info kommer snart här
+          och på mail. Vi ser fram emot att fira vår stora dag med dig!
         </p>
 
         <p class="playfair-display">Massor av kärlek,</p>

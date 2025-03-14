@@ -21,12 +21,20 @@
         <div class="space-y-6 text-gray-700 playfair-display text-lg">
           <!-- Friday Section -->
           <div>
-            <h3 class="text-2xl font-bold playfair-display">Fredag</h3>
-            <p class="playfair-display mt-2 text-xl">
-              För de som är sugna samlas vi för en avslappnad drink någonstans i
-              stan kvällen innan bröllopet. Vi återkommer snart med exakt tid
-              och plats!
-            </p>
+            <div>
+              <h3 class="text-2xl font-bold playfair-display">
+                Fredag: Mingel på Lydmar
+              </h3>
+              <p class="mt-2 text-xl">
+                Mingel på Lydmar Hotels uteservering, Stockholm.<br />
+                Vi ser fram emot att träffa alla för ett glas i solen och en
+                trevlig kväll tillsammans. Vi bjuder på dryck och snacks och
+                hoppas att så många som möjligt vill vara med!<br />
+                <strong>Plats:</strong> Lydmar Hotel, Södra Blasieholmshamnen 2,
+                111 48 Stockholm.<br />
+                <strong>Tid:</strong> 18:00 – ca 21:00.
+              </p>
+            </div>
           </div>
           <!-- Saturday Section -->
           <div>

@@ -75,24 +75,28 @@
 
       <NuxtLink
         to="/info"
+        @click="closeMenu"
         class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 mb-2 hover:shadow-md playfair-display"
       >
         INFO
       </NuxtLink>
       <NuxtLink
         to="/plan"
+        @click="closeMenu"
         class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 mb-2 hover:shadow-md playfair-display"
       >
         SCHEMA
       </NuxtLink>
       <NuxtLink
         to="/destination"
+        @click="closeMenu"
         class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 mb-2 hover:shadow-md playfair-display"
       >
         DESTINATION
       </NuxtLink>
       <NuxtLink
         to="/rsvp"
+        @click="closeMenu"
         class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 hover:shadow-md playfair-display"
       >
         RSVP
@@ -111,6 +115,9 @@ export default {
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+    },
+    closeMenu() {
+      this.isMenuOpen = false;
     },
   },
 };

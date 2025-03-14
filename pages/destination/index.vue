@@ -70,7 +70,7 @@
               target="_blank"
               class="playfair-display text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md"
             >
-              Nettside til Villa Soludden
+              Hemsida til Villa Soludden
             </a>
           </div>
 
