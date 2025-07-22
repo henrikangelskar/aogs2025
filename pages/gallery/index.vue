@@ -1,121 +1,144 @@
 <template>
   <div class="min-h-screen diagonal-stripes text-black">
-    <!-- Hero Section with Scrolling Images -->
-    <div class="relative h-96 overflow-hidden bg-[#2501ec]">
-      <!-- Gradient overlay for better text visibility -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/60 z-10"></div>
-      
-      <!-- Scrolling Images Container -->
-      <div v-if="heroImages.length > 0" class="flex h-full animate-scroll">
-        <div class="flex h-full">
-          <div v-for="(image, index) in heroImages" :key="index" class="flex-shrink-0">
-            <img 
-              :src="image.url" 
-              :alt="image.alt"
-              class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
-            />
+    <!-- Initial Loading Screen -->
+    <div v-if="initialLoading" class="fixed inset-0 z-50 bg-white flex items-center justify-center">
+      <div class="text-center">
+        <div class="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-[#2501ec] mb-6"></div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Laddar galleri...</h2>
+        <p class="text-gray-600 mb-2">Förbereder era minnen från bröllopet</p>
+        <div class="flex items-center justify-center space-x-2 mt-4">
+          <div class="flex space-x-1">
+            <div class="w-2 h-2 bg-[#2501ec] rounded-full animate-bounce"></div>
+            <div class="w-2 h-2 bg-[#2501ec] rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+            <div class="w-2 h-2 bg-[#2501ec] rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
           </div>
+          <span class="text-sm text-gray-500">{{ loadingProgress }}%</span>
         </div>
-        <!-- Duplicate for seamless loop -->
-        <div class="flex h-full">
-          <div v-for="(image, index) in heroImages" :key="`duplicate-${index}`" class="flex-shrink-0">
-            <img 
-              :src="image.url" 
-              :alt="image.alt"
-              class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
-            />
-          </div>
-        </div>
-      </div>
-      
-      <!-- Fallback when no images -->
-      <div v-else class="flex h-full items-center justify-center">
-        <div class="text-center text-white">
-          <div class="text-8xl mb-4">📸</div>
-          <p class="text-xl">No images uploaded yet</p>
-        </div>
-      </div>
-      
-      <!-- Hero Content -->
-      <div class="absolute inset-0 flex items-center justify-center z-20">
-        <div class="text-center text-white">
-          <h1 class="text-5xl font-bold mb-4">Bröllopsgalleri</h1>
-          <p class="text-xl mb-8">Dela era minnen med alla</p>
-          <button
-            @click="openUploadModal"
-            class="bg-white text-[#2501ec] px-8 py-3 font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg rounded-lg"
-          >
-            📸 Ladda upp foton
-          </button>
+        <div v-if="timeoutWarning" class="mt-4 text-orange-600 text-sm">
+          <p>Tar lite längre tid än vanligt...</p>
         </div>
       </div>
     </div>
 
-    <!-- Gallery Grid Section -->
-    <div class="container mx-auto px-4 py-12">
-      <div class="max-w-7xl mx-auto">
-        <h2 class="text-3xl font-bold text-black mb-8 text-center">Minnen från firandet</h2>
+    <!-- Main Content (only shown after initial loading) -->
+    <div v-else>
+      <!-- Hero Section with Scrolling Images -->
+      <div class="relative h-96 overflow-hidden bg-[#2501ec]">
+        <!-- Gradient overlay for better text visibility -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/60 z-10"></div>
         
-        <!-- Loading State -->
-        <div v-if="loading" class="text-center py-12">
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
-          <p class="mt-4 text-gray-700">Laddar bilder...</p>
-          <div class="mt-4 flex justify-center">
-            <div class="inline-flex items-center space-x-2">
-              <svg class="animate-spin h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span class="text-sm text-gray-600 opacity-80">Hämtar minnen från bröllopet...</span>
+        <!-- Scrolling Images Container -->
+        <div v-if="heroImages.length > 0" class="flex h-full animate-scroll">
+          <div class="flex h-full">
+            <div v-for="(image, index) in heroImages" :key="index" class="flex-shrink-0">
+              <img 
+                :src="image.url" 
+                :alt="image.alt"
+                class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
+              />
+            </div>
+          </div>
+          <!-- Duplicate for seamless loop -->
+          <div class="flex h-full">
+            <div v-for="(image, index) in heroImages" :key="`duplicate-${index}`" class="flex-shrink-0">
+              <img 
+                :src="image.url" 
+                :alt="image.alt"
+                class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
+              />
             </div>
           </div>
         </div>
         
-        <!-- Empty State -->
-        <div v-else-if="galleryImages.length === 0" class="text-center py-12">
-          <div class="text-6xl mb-4">💒</div>
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">Inga bilder ännu</h3>
-          <p class="text-gray-600 mb-6">Bli den första att ladda upp foton från bröllopet!</p>
-          <button
-            @click="openUploadModal"
-            class="bg-[#2501ec] text-white px-6 py-3 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
-          >
-            Ladda upp första fotot
-          </button>
+        <!-- Fallback when no images -->
+        <div v-else class="flex h-full items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-8xl mb-4">📸</div>
+            <p class="text-xl">No images uploaded yet</p>
+          </div>
         </div>
         
-        <!-- Dynamic Grid Layout -->
-        <div v-else>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-[200px]">
-            <div 
-              v-for="(image, index) in galleryImages" 
-              :key="image.id"
-              class="group relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
-              :class="getGridClass(index)"
-              @click="openImageViewer(index)"
+        <!-- Hero Content -->
+        <div class="absolute inset-0 flex items-center justify-center z-20">
+          <div class="text-center text-white">
+            <h1 class="text-5xl font-bold mb-4">Bröllopsgalleri</h1>
+            <p class="text-xl mb-8">Dela era minnen med alla</p>
+            <button
+              @click="openUploadModal"
+              class="bg-white text-[#2501ec] px-8 py-3 font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg rounded-lg"
             >
-              <img 
-                :src="image.url" 
-                :alt="image.alt"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div class="absolute bottom-4 left-4 text-white">
-                  <p class="font-semibold">{{ image.title }}</p>
-                  <p class="text-sm opacity-90">{{ image.date }}</p>
-                </div>
+              📸 Ladda upp foton
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gallery Grid Section -->
+      <div class="container mx-auto px-4 py-12">
+        <div class="max-w-7xl mx-auto">
+          <h2 class="text-3xl font-bold text-black mb-8 text-center">Minnen från firandet</h2>
+          
+          <!-- Loading State -->
+          <div v-if="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
+            <p class="mt-4 text-gray-700">Laddar bilder...</p>
+            <div class="mt-4 flex justify-center">
+              <div class="inline-flex items-center space-x-2">
+                <svg class="animate-spin h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-sm text-gray-600 opacity-80">Hämtar minnen från bröllopet...</span>
               </div>
             </div>
           </div>
           
-          <!-- Load More Button -->
-          <div v-if="hasMoreImages" class="text-center mt-8">
+          <!-- Empty State -->
+          <div v-else-if="galleryImages.length === 0" class="text-center py-12">
+            <div class="text-6xl mb-4">💒</div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Inga bilder ännu</h3>
+            <p class="text-gray-600 mb-6">Bli den första att ladda upp foton från bröllopet!</p>
             <button
-              @click="loadMoreImages"
-              class="bg-[#2501ec] text-white px-8 py-3 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
+              @click="openUploadModal"
+              class="bg-[#2501ec] text-white px-6 py-3 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
             >
-              Ladda fler bilder
+              Ladda upp första fotot
             </button>
+          </div>
+          
+          <!-- Dynamic Grid Layout -->
+          <div v-else>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-[200px]">
+              <div 
+                v-for="(image, index) in galleryImages" 
+                :key="image.id"
+                class="group relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
+                :class="getGridClass(index)"
+                @click="openImageViewer(index)"
+              >
+                <img 
+                  :src="image.url" 
+                  :alt="image.alt"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-4 left-4 text-white">
+                    <p class="font-semibold">{{ image.title }}</p>
+                    <p class="text-sm opacity-90">{{ image.date }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Load More Button -->
+            <div v-if="hasMoreImages" class="text-center mt-8">
+              <button
+                @click="loadMoreImages"
+                class="bg-[#2501ec] text-white px-8 py-3 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
+              >
+                Ladda fler bilder
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -456,6 +479,64 @@ const currentPage = ref(1)
 const imagesPerPage = 50
 const hasMoreImages = ref(true)
 
+// Preloading state
+const initialLoading = ref(true)
+const loadingProgress = ref(0)
+const timeoutWarning = ref(false)
+const preloadTimeout = ref(null)
+const preloadedImages = ref(new Set())
+
+// Preload images function
+const preloadImages = async (images) => {
+  if (images.length === 0) {
+    initialLoading.value = false
+    return
+  }
+
+  const promises = images.map((image, index) => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        preloadedImages.value.add(image.url)
+        loadingProgress.value = Math.round(((index + 1) / images.length) * 100)
+        resolve()
+      }
+      img.onerror = () => {
+        // Even if image fails to load, we still count it as "loaded" to avoid infinite waiting
+        preloadedImages.value.add(image.url)
+        loadingProgress.value = Math.round(((index + 1) / images.length) * 100)
+        resolve()
+      }
+      img.src = image.url
+    })
+  })
+
+  // Set up 5-second timeout
+  const timeoutPromise = new Promise((resolve) => {
+    preloadTimeout.value = setTimeout(() => {
+      timeoutWarning.value = true
+      resolve()
+    }, 5000)
+  })
+
+  // Wait for either all images to load or timeout
+  await Promise.race([
+    Promise.all(promises),
+    timeoutPromise
+  ])
+
+  // Clear timeout if it was set
+  if (preloadTimeout.value) {
+    clearTimeout(preloadTimeout.value)
+    preloadTimeout.value = null
+  }
+
+  // Small delay to show the loading animation
+  await new Promise(resolve => setTimeout(resolve, 500))
+  
+  initialLoading.value = false
+}
+
 // Fetch images from Supabase
 const fetchImages = async (page = 1, append = false) => {
   try {
@@ -500,6 +581,9 @@ const fetchImages = async (page = 1, append = false) => {
       heroImages.value = transformedImages.slice(0, 6)
       galleryImages.value = transformedImages
       allImages.value = transformedImages
+      
+      // Preload images before showing the page
+      await preloadImages(transformedImages)
     } else {
       // Append to existing images
       galleryImages.value = [...galleryImages.value, ...transformedImages]
@@ -529,8 +613,14 @@ const loadMoreImages = async () => {
 }
 
 // Load images on component mount
-onMounted(() => {
-  fetchImages()
+onMounted(async () => {
+  // Reset loading states
+  initialLoading.value = true
+  loadingProgress.value = 0
+  timeoutWarning.value = false
+  preloadedImages.value.clear()
+  
+  await fetchImages()
 })
 
 // Get grid class based on image size and index
