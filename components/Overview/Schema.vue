@@ -26,15 +26,22 @@
                 Fredag: Mingel på Lydmar
               </h3>
               <p class="mt-2 text-xl">
-                Mingel på Lydmar Hotels uteservering, Stockholm.<br />
-                Vi ser fram emot att träffa alla för ett glas i solen och en
-                trevlig kväll tillsammans. Vi bjuder på dryck och snacks och
-                hoppas att så många som möjligt vill vara med!<br />
-                <strong>Plats:</strong> Lydmar Hotel, Södra Blasieholmshamnen 2,
-                111 48 Stockholm.<br />
-                <strong>Tid:</strong> 18:00 – ca 21:00.
+                Mingel på Lydmars uteservering, Stockholm<br /><br />
+                Vi ser fram emot att ses för ett glas i solen och en härlig kväll tillsammans!<br />
+                Vi bjuder på välkomstdryck och snacks, och hoppas att så många som möjligt vill komma förbi.<br /><br />
+                Det serveras ingen middag, så vi tipsar om att äta något innan.<br /><br />
+                <strong>Plats:</strong> Lydmar Hotel, Södra Blasieholmshamnen 2, Stockholm<br />
+                <strong>Tid:</strong> 18:30 (kom i tid) - lagom sent
               </p>
             </div>
+          </div>
+          
+          <!-- Gifts Section -->
+          <div>
+            <h3 class="text-2xl font-bold playfair-display">Presenter</h3>
+            <p class="mt-2 text-xl">
+              Det absolut viktigaste för oss är att ni är där och firar med oss! Vi önskar oss inga presenter, bara att få dela denna dag med er. Om någon ändå vill bidra till bröllopet eller vår smekmånad går det att Vippsa eller Swisha valfri summa till Anna på +46 (0) 70-786 09 84, så för hon över det till oss sen efter bröllopet.
+            </p>
           </div>
           <!-- Saturday Section -->
           <div>
