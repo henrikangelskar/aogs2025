@@ -25,29 +25,36 @@
         <p v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</p>
       </div>
       <div v-else>
-        <NavBar />
+        <NavBar v-if="!isGalleryPage" />
 
         <!-- Authenticated: render page content -->
-        <slot />
+        <NuxtPage />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import NavBar from "~/components/Nav/NavBar.vue";
 
 const loading = ref(true);
 const isLoggedIn = ref(false);
 const codeInput = ref("");
 const errorMessage = ref("");
+const isGalleryPage = ref(false);
 
 onMounted(() => {
   // Check if the user has already entered the correct code
   isLoggedIn.value = localStorage.getItem("access_granted") === "true";
+  
   loading.value = false;
 });
+
+// Watch for route changes
+watch(() => useRoute().path, (newPath) => {
+  isGalleryPage.value = newPath === '/gallery';
+}, { immediate: true });
 
 const checkCode = () => {
   if (codeInput.value.toLowerCase().trim() === "aogs2025") {
