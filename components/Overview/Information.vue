@@ -235,13 +235,7 @@
           <h2 class="text-2xl font-bold playfair-display mb-2">Presenter</h2>
           <div class="space-y-6 playfair-display text-lg">
             <p class="mt-2 text-xl">
-              Det absolut viktigaste för oss är att ni är där och firar med oss!
-              Vi önskar oss inga presenter, bara att få dela denna dag med er.
-            </p>
-            <p class="mt-2 text-xl">
-              Om någon ändå vill bidra till bröllopet eller vår smekmånad går
-              det att Vippsa eller Swisha valfri summa till Amalie på 93260681
-              eller 0702424374.
+              Det absolut viktigaste för oss är att ni är där och firar med oss! Vi önskar oss inga presenter, bara att få dela denna dag med er. Om någon ändå vill bidra till bröllopet eller vår smekmånad går det att Vippsa eller Swisha valfri summa till Anna på +46 (0) 70-786 09 84, så för hon över det till oss sen efter bröllopet.
             </p>
           </div>
         </div>
