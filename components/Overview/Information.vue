@@ -36,7 +36,7 @@
                 hoppas att så många som möjligt vill vara med!<br />
                 <strong>Plats:</strong> Lydmar Hotel, Södra Blasieholmshamnen 2,
                 111 48 Stockholm.<br />
-                <strong>Tid:</strong> 18:00 – ca 21:00.
+                <strong>Tid:</strong> 18:30 – ca 21:00.
               </p>
             </div>
             <!-- Lördag -->
