@@ -35,7 +35,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import confetti from "canvas-confetti";
 import NavBar from "~/components/Nav/NavBar.vue";
 
 const loading = ref(true);
@@ -44,11 +45,41 @@ const codeInput = ref("");
 const errorMessage = ref("");
 const isGalleryPage = ref(false);
 
+let autoConfettiInterval;
+
+function launchCornerConfetti() {
+  const colors = ["#FFC0CB", "#FFD700", "#FFFACD", "#E6E6FA", "#FF69B4", "#98FB98", "#87CEEB"];
+  const isLeftCorner = Math.random() < 0.5;
+  
+  confetti({
+    particleCount: 20,
+    startVelocity: 30,
+    spread: 55,
+    angle: isLeftCorner ? 45 : 135,
+    gravity: 0.8,
+    ticks: 100,
+    origin: {
+      x: isLeftCorner ? 0 : 1,
+      y: 0.7
+    },
+    colors: colors,
+    shapes: ["circle"],
+    scalar: 1.2,
+  });
+}
+
 onMounted(() => {
   // Check if the user has already entered the correct code
   isLoggedIn.value = localStorage.getItem("access_granted") === "true";
   
   loading.value = false;
+  
+  // Start automatic corner confetti every 10 seconds on all pages
+  autoConfettiInterval = setInterval(launchCornerConfetti, 10000);
+});
+
+onUnmounted(() => {
+  clearInterval(autoConfettiInterval);
 });
 
 // Watch for route changes

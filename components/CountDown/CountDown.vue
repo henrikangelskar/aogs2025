@@ -143,6 +143,7 @@ function launchButtonConfetti() {
   frame();
 }
 
+
 function launchConfettiWithText() {
   // Launch quick button confetti at random position
   launchButtonConfetti();
