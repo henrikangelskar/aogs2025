@@ -508,18 +508,28 @@
               @drop.prevent="handleDrop"
               @dragover.prevent
               @dragenter.prevent
-              class="border-2 border-dashed border-white p-8 text-center hover:border-gray-300 transition-colors cursor-pointer"
-              :class="{ 'border-gray-300 bg-white bg-opacity-10': isDragOver }"
-              @click="$refs.fileInput.click()"
+              @click="openFileSelector"
+              @touchstart="openFileSelector"
+              class="border-2 border-dashed border-gray-300 p-8 text-center hover:border-gray-400 transition-colors cursor-pointer touch-manipulation"
+              :class="{ 'border-gray-400 bg-gray-50': isDragOver }"
             >
               <div class="space-y-4">
                 <div class="text-6xl text-gray-400">
                   📸
                 </div>
                 <div>
-                  <p class="text-lg font-medium text-gray-700">
+                  <p class="text-lg font-medium text-gray-700 mb-4">
                     Släpp era bilder/videos här eller klicka för att bläddra
                   </p>
+                  
+                  <!-- Mobile-friendly button -->
+                  <button
+                    @click.stop="openFileSelector"
+                    class="bg-[#2501ec] text-white px-6 py-3 font-medium border border-gray-300 hover:shadow-md transition-all mb-4 touch-manipulation"
+                  >
+                    📱 Välj filer
+                  </button>
+                  
                   <p class="text-sm text-gray-500 mt-2">
                     Stöder JPG, PNG, GIF, MP4, MOV upp till 100MB
                   </p>
@@ -539,6 +549,7 @@
               type="file"
               multiple
               accept="image/*,video/*"
+              capture="environment"
               class="hidden"
               @change="handleFileSelect"
             />
@@ -897,10 +908,27 @@ const closeDeleteSuccess = () => {
 
 
 
+// Open file selector
+const openFileSelector = (event) => {
+  // Prevent any default behavior
+  event.preventDefault()
+  event.stopPropagation()
+  
+  // For mobile, add a small delay to ensure the event is processed
+  setTimeout(() => {
+    if (fileInput.value) {
+      fileInput.value.click()
+    }
+  }, 10)
+}
+
 // Handle file selection
 const handleFileSelect = (event) => {
   const files = Array.from(event.target.files)
   addFiles(files)
+  
+  // Clear the input value so the same file can be selected again
+  event.target.value = ''
 }
 
 // Handle drag and drop
