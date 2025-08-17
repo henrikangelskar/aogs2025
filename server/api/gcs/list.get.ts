@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event)
     const page = parseInt(query.page as string) || 1
     const limit = parseInt(query.limit as string) || 50
+    const mediaType = query.mediaType as string || 'all' // 'images', 'videos', or 'all'
     
     const storage = new Storage({
       projectId: config.googleCloudProjectId,
@@ -17,14 +18,21 @@ export default defineEventHandler(async (event) => {
     
     // List all files in the bucket
     const [files] = await bucket.getFiles({
-      maxResults: limit * page, // Get more to implement pagination
+      maxResults: limit * page * 3, // Get more to account for filtering
     })
 
     // Transform files to the format expected by the gallery
     const mediaFiles = files
       .filter(file => {
         const mimeType = file.metadata?.contentType || ''
-        return mimeType.startsWith('image/') || mimeType.startsWith('video/')
+        
+        if (mediaType === 'images') {
+          return mimeType.startsWith('image/')
+        } else if (mediaType === 'videos') {
+          return mimeType.startsWith('video/')
+        } else {
+          return mimeType.startsWith('image/') || mimeType.startsWith('video/')
+        }
       })
       .map(file => {
         // Extract timestamp from filename if it exists (TIMESTAMP-randomstring.ext)

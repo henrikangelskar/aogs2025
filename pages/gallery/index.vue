@@ -118,17 +118,37 @@
           
           <!-- Gallery Tab Content -->
           <div v-if="activeTab === 'gallery'">
+            <!-- Media Type Sub-tabs -->
+            <div class="flex justify-center mb-6">
+              <div class="bg-gray-100 rounded-lg p-1">
+                <button
+                  @click="switchMediaType('images')"
+                  class="px-4 py-2 rounded-md font-medium transition-all duration-300"
+                  :class="activeMediaType === 'images' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-600 hover:text-gray-800'"
+                >
+                  📸 Bilder
+                </button>
+                <button
+                  @click="switchMediaType('videos')"
+                  class="px-4 py-2 rounded-md font-medium transition-all duration-300"
+                  :class="activeMediaType === 'videos' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-600 hover:text-gray-800'"
+                >
+                  🎬 Videos
+                </button>
+              </div>
+            </div>
+
             <!-- Loading State -->
             <div v-if="loading" class="text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
-            <p class="mt-4 text-gray-700">Laddar bilder...</p>
+            <p class="mt-4 text-gray-700">Laddar innehåll...</p>
             <div class="mt-4 flex justify-center">
               <div class="inline-flex items-center space-x-2">
                 <svg class="animate-spin h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span class="text-sm text-gray-600 opacity-80">Hämtar minnen från bröllopet...</span>
+                <span class="text-sm text-gray-600 opacity-80">Hämtar innehåll...</span>
               </div>
             </div>
           </div>
@@ -186,7 +206,7 @@
                 @click="loadMoreImages"
                 class="bg-[#2501ec] text-white px-8 py-3 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
               >
-                Ladda fler bilder
+                Ladda fler {{ activeMediaType === 'images' ? 'bilder' : 'videos' }}
               </button>
             </div>
           </div>
@@ -194,6 +214,26 @@
 
           <!-- Download Tab Content -->
           <div v-else-if="activeTab === 'download'">
+            <!-- Media Type Sub-tabs -->
+            <div class="flex justify-center mb-6">
+              <div class="bg-gray-100 rounded-lg p-1">
+                <button
+                  @click="switchMediaType('images')"
+                  class="px-4 py-2 rounded-md font-medium transition-all duration-300"
+                  :class="activeMediaType === 'images' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-600 hover:text-gray-800'"
+                >
+                  📸 Bilder
+                </button>
+                <button
+                  @click="switchMediaType('videos')"
+                  class="px-4 py-2 rounded-md font-medium transition-all duration-300"
+                  :class="activeMediaType === 'videos' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-600 hover:text-gray-800'"
+                >
+                  🎬 Videos
+                </button>
+              </div>
+            </div>
+
             <!-- Download Controls -->
             <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
               <div class="flex items-center space-x-4">
@@ -282,7 +322,7 @@
                 @click="loadMoreImages"
                 class="bg-[#2501ec] text-white px-8 py-3 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
               >
-                Ladda fler filer
+                Ladda fler {{ activeMediaType === 'images' ? 'bilder' : 'videos' }}
               </button>
             </div>
           </div>
@@ -659,6 +699,7 @@ const gcs = $gcs
 
 // Tab state
 const activeTab = ref('gallery')
+const activeMediaType = ref('images') // 'images', 'videos', 'all'
 
 // Modal state
 const showUploadModal = ref(false)
@@ -716,6 +757,7 @@ const allImages = ref([])
 const loading = ref(true)
 const currentPage = ref(1)
 const imagesPerPage = 50
+const videosPerPage = 4
 const hasMoreImages = ref(true)
 
 // Preloading state
@@ -783,11 +825,15 @@ const fetchImages = async (page = 1, append = false) => {
       loading.value = true
     }
     
+    // Determine limit based on media type
+    const limit = activeMediaType.value === 'videos' ? videosPerPage : imagesPerPage
+    
     // Fetch images from GCS via API
     const response = await $fetch('/api/gcs/list', {
       query: {
         page,
-        limit: imagesPerPage
+        limit,
+        mediaType: activeMediaType.value
       }
     })
 
@@ -1282,6 +1328,17 @@ const uploadImages = async () => {
   }
 }
 
+// Switch media type and reload
+const switchMediaType = async (mediaType) => {
+  // Only allow 'images' or 'videos'
+  if (mediaType !== 'images' && mediaType !== 'videos') {
+    mediaType = 'images'
+  }
+  activeMediaType.value = mediaType
+  currentPage.value = 1
+  await fetchImages(1, false)
+}
+
 // Fetch all images for selection purposes
 const fetchAllImagesForSelection = async () => {
   try {
@@ -1289,7 +1346,8 @@ const fetchAllImagesForSelection = async () => {
     const response = await $fetch('/api/gcs/list', {
       query: {
         page: 1,
-        limit: 10000 // Large number to get all
+        limit: 10000, // Large number to get all
+        mediaType: 'all' // Always get all for download selection
       }
     })
 
