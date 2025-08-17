@@ -445,8 +445,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const { $supabase } = useNuxtApp()
-const supabase = $supabase
+const { $gcs } = useNuxtApp()
+const gcs = $gcs
 
 // Modal state
 const showUploadModal = ref(false)
@@ -537,40 +537,34 @@ const preloadImages = async (images) => {
   initialLoading.value = false
 }
 
-// Fetch images from Supabase
+// Fetch images from Google Cloud Storage
 const fetchImages = async (page = 1, append = false) => {
   try {
     if (page === 1) {
       loading.value = true
     }
     
-    // Calculate offset for pagination
-    const offset = (page - 1) * imagesPerPage
-    
-    // Fetch images with pagination
-    const { data: images, error } = await supabase
-      .from('user_images')
-      .select('*')
-      .order('uploaded_at', { ascending: false })
-      .range(offset, offset + imagesPerPage - 1)
+    // Fetch images from GCS via API
+    const response = await $fetch('/api/gcs/list', {
+      query: {
+        page,
+        limit: imagesPerPage
+      }
+    })
 
-    if (error) {
-      console.error('Error fetching images:', error)
+    if (!response.success) {
+      console.error('Error fetching images from GCS')
       return
     }
 
-    // Transform the data to include public URLs and format for display
-    const transformedImages = images.map((image, index) => {
-      const publicUrl = supabase.storage
-        .from('user-images')
-        .getPublicUrl(image.file_path).data.publicUrl
-
+    // Transform the data for display
+    const transformedImages = response.data.images.map((image) => {
       return {
         id: image.id,
-        url: publicUrl,
-        alt: image.file_name,
-        title: image.message || '', // Use message or empty string
-        date: new Date(image.uploaded_at).toLocaleDateString(),
+        url: image.url,
+        alt: image.alt,
+        title: image.title || '',
+        date: image.date,
         size: getRandomSize(), // Random size for dynamic layout
         originalData: image
       }
@@ -591,7 +585,7 @@ const fetchImages = async (page = 1, append = false) => {
     }
 
     // Check if there are more images to load
-    hasMoreImages.value = transformedImages.length === imagesPerPage
+    hasMoreImages.value = response.data.hasMore
     currentPage.value = page
 
   } catch (error) {
@@ -690,23 +684,11 @@ const deleteImage = async () => {
     deleting.value = true
     const imageToDelete = currentImage.value
     
-    // Delete from storage
-    const { error: storageError } = await supabase.storage
-      .from('user-images')
-      .remove([imageToDelete.originalData.file_path])
-    
-    if (storageError) {
-      console.error('Storage delete error:', storageError)
-    }
-    
-    // Delete from database
-    const { error: dbError } = await supabase
-      .from('user_images')
-      .delete()
-      .eq('id', imageToDelete.id)
-    
-    if (dbError) {
-      console.error('Database delete error:', dbError)
+    // Delete from Google Cloud Storage
+    try {
+      await gcs.deleteFile(imageToDelete.id)
+    } catch (storageError) {
+      console.error('GCS delete error:', storageError)
     }
     
     // Set delete completed state
@@ -815,7 +797,7 @@ const getFilePreview = (file) => {
   return URL.createObjectURL(file)
 }
 
-// Upload images to Supabase
+// Upload images to Google Cloud Storage
 const uploadImages = async () => {
   if (selectedFiles.value.length === 0) return
 
@@ -832,39 +814,16 @@ const uploadImages = async () => {
       // Generate unique filename
       const fileExt = compressedFile.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-      const filePath = `${fileName}`
 
-      // Upload to Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('user-images')
-        .upload(filePath, compressedFile)
+      try {
+        // Upload to Google Cloud Storage
+        const publicUrl = await gcs.uploadFile(compressedFile, fileName)
 
-      if (uploadError) {
+        console.log(`Successfully uploaded: ${fileName}`)
+
+      } catch (uploadError) {
         console.error('Upload error:', uploadError)
         continue
-      }
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('user-images')
-        .getPublicUrl(filePath)
-
-      // Save metadata to database
-      const { error: dbError } = await supabase
-        .from('user_images')
-        .insert({
-          user_id: null, // Allow anonymous uploads
-          file_name: compressedFile.name,
-          file_path: filePath,
-          file_size: compressedFile.size,
-          mime_type: compressedFile.type,
-          description: '',
-          tags: [],
-          message: sharedMessage.value || ''
-        })
-
-      if (dbError) {
-        console.error('Database error:', dbError)
       }
 
       // Update progress

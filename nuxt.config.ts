@@ -24,7 +24,11 @@ export default defineNuxtConfig({
   modules: ["@nuxtjs/tailwindcss"],
 
   runtimeConfig: {
+    googleCloudProjectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+    googleCloudBucketName: process.env.GOOGLE_CLOUD_BUCKET_NAME,
+    googleApplicationCredentialsJson: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
     public: {
+      googleCloudBucketName: process.env.GOOGLE_CLOUD_BUCKET_NAME,
       supabaseUrl: process.env.SUPABASE_URL || 'https://ddndffgkzzuedtuzhijm.supabase.co',
       supabaseKey: process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkbmRmZmdrenp1ZWR0dXpoaWptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyMTUxMzMsImV4cCI6MjA2ODc5MTEzM30.6lyMUQ4vhzV-XMTSaH-dp_H-u6dY2Q5Nng3y13-sJxk'
     }
