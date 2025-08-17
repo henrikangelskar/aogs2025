@@ -554,19 +554,6 @@
               </button>
             </div>
 
-            <!-- Shared Message Input -->
-            <div v-if="selectedFiles.length > 0" class="mt-6">
-              <h3 class="text-lg font-medium text-gray-800 mb-4">Lägg till ett roligt meddelande</h3>
-              <textarea
-                v-model="sharedMessage"
-                placeholder="Skriv ett roligt meddelande om dessa minnen från bröllopet..."
-                class="w-full p-3 border border-gray-300 text-sm resize-none"
-                rows="4"
-                maxlength="200"
-              ></textarea>
-              <p class="text-xs text-gray-500 mt-1">{{ sharedMessage.length }}/200 tecken</p>
-            </div>
-
             <!-- Selected Files Preview -->
             <div v-if="selectedFiles.length > 0" class="mt-6">
               <h3 class="text-lg font-medium text-gray-800 mb-4">Valda filer:</h3>
@@ -655,7 +642,6 @@ watch(masterCheckboxState, (newState) => {
 
 // Upload state
 const selectedFiles = ref([])
-const sharedMessage = ref('')
 const uploading = ref(false)
 const uploadCompleted = ref(false)
 const uploadProgress = ref(0)
@@ -841,7 +827,6 @@ const openUploadModal = () => {
 const closeUploadModal = () => {
   showUploadModal.value = false
   selectedFiles.value = []
-  sharedMessage.value = ''
   uploadProgress.value = 0
   uploading.value = false
   uploadCompleted.value = false
