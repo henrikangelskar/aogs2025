@@ -12,113 +12,21 @@
         </NuxtLink>
       </div>
 
-      <!-- Desktop Navigation (Hidden on Small Screens) -->
-      <div class="hidden md:flex space-x-4">
+      <!-- Navigation -->
+      <div class="flex space-x-4">
         <NuxtLink
-          to="/info"
+          to="/gallery"
           class="text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md text-center playfair-display"
         >
-          INFO
-        </NuxtLink>
-        <NuxtLink
-          to="/plan"
-          class="text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md text-center playfair-display"
-        >
-          SCHEMA
-        </NuxtLink>
-        <NuxtLink
-          to="/destination"
-          class="text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md text-center playfair-display"
-        >
-          DESTINATION
-        </NuxtLink>
-        <NuxtLink
-          to="/rsvp"
-          class="text-sm md:text-md lg:text-xl p-2 border border-gray-300 px-4 hover:shadow-md text-center playfair-display"
-        >
-          RSVP
+          GALLERI
         </NuxtLink>
       </div>
-
-      <!-- Mobile Hamburger Menu (Visible on Small Screens) -->
-      <div class="md:hidden">
-        <button
-          @click="toggleMenu"
-          class="p-2 border border-gray-300 hover:shadow-md"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Menu Dropdown as an overlay -->
-    <div
-      v-if="isMenuOpen"
-      class="absolute top-full left-0 right-0 z-10 px-2 pb-4 pt-2 bg-white border-t border-gray-300"
-    >
-      <!-- Close Button -->
-      <div class="flex justify-end">
-        <button @click="toggleMenu" class="p-2">✖</button>
-      </div>
-
-      <NuxtLink
-        to="/info"
-        @click="closeMenu"
-        class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 mb-2 hover:shadow-md playfair-display"
-      >
-        INFO
-      </NuxtLink>
-      <NuxtLink
-        to="/plan"
-        @click="closeMenu"
-        class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 mb-2 hover:shadow-md playfair-display"
-      >
-        SCHEMA
-      </NuxtLink>
-      <NuxtLink
-        to="/destination"
-        @click="closeMenu"
-        class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 mb-2 hover:shadow-md playfair-display"
-      >
-        DESTINATION
-      </NuxtLink>
-      <NuxtLink
-        to="/rsvp"
-        @click="closeMenu"
-        class="block text-sm md:text-md lg:text-xl p-2 border border-gray-300 hover:shadow-md playfair-display"
-      >
-        RSVP
-      </NuxtLink>
     </div>
   </nav>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      isMenuOpen: false,
-    };
-  },
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
-    closeMenu() {
-      this.isMenuOpen = false;
-    },
-  },
+  // Simple navigation component
 };
 </script>

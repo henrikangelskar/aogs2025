@@ -34,13 +34,31 @@ export default defineEventHandler(async (event) => {
     const bucket = storage.bucket(config.googleCloudBucketName)
     const file = bucket.file(fileName)
 
+    // Enforce optional quota before uploading
+    const quotaBytes = parseInt(config.maxGcsTotalBytes || '0', 10)
+    if (quotaBytes > 0) {
+      let totalBytes = 0
+      // Using asynchronous iteration to avoid loading everything in memory at once
+      const [files] = await bucket.getFiles()
+      for (const existingFile of files) {
+        const sizeStr = existingFile.metadata?.size
+        const sizeNum = sizeStr ? parseInt(sizeStr, 10) : 0
+        totalBytes += Number.isNaN(sizeNum) ? 0 : sizeNum
+      }
+      const newFileBytes = fileEntry.data.length
+      if (totalBytes + newFileBytes > quotaBytes) {
+        throw createError({
+          statusCode: 413,
+          statusMessage: 'Upload quota exceeded'
+        })
+      }
+    }
+
     await file.save(fileEntry.data, {
       metadata: {
         contentType: fileEntry.type || 'application/octet-stream'
       }
     })
-
-    await file.makePublic()
 
     const publicUrl = `https://storage.googleapis.com/${config.googleCloudBucketName}/${fileName}`
 

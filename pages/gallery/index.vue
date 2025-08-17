@@ -31,7 +31,16 @@
         <div v-if="heroImages.length > 0" class="flex h-full animate-scroll">
           <div class="flex h-full">
             <div v-for="(image, index) in heroImages" :key="index" class="flex-shrink-0">
+              <video 
+                v-if="image.originalData.mimeType.startsWith('video/')"
+                :src="image.url"
+                class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
+                muted
+                loop
+                autoplay
+              />
               <img 
+                v-else
                 :src="image.url" 
                 :alt="image.alt"
                 class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
@@ -41,7 +50,16 @@
           <!-- Duplicate for seamless loop -->
           <div class="flex h-full">
             <div v-for="(image, index) in heroImages" :key="`duplicate-${index}`" class="flex-shrink-0">
+              <video 
+                v-if="image.originalData.mimeType.startsWith('video/')"
+                :src="image.url"
+                class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
+                muted
+                loop
+                autoplay
+              />
               <img 
+                v-else
                 :src="image.url" 
                 :alt="image.alt"
                 class="h-full w-80 object-cover shadow-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
@@ -78,8 +96,30 @@
         <div class="max-w-7xl mx-auto">
           <h2 class="text-3xl font-bold text-black mb-8 text-center">Minnen från firandet</h2>
           
-          <!-- Loading State -->
-          <div v-if="loading" class="text-center py-12">
+          <!-- Tab Navigation -->
+          <div class="flex justify-center mb-8">
+            <div class="bg-white rounded-lg p-1 shadow-lg">
+              <button
+                @click="activeTab = 'gallery'"
+                class="px-6 py-3 rounded-md font-medium transition-all duration-300"
+                :class="activeTab === 'gallery' ? 'bg-[#2501ec] text-white' : 'text-gray-600 hover:text-gray-800'"
+              >
+                📸 Galleri
+              </button>
+              <button
+                @click="activeTab = 'download'"
+                class="px-6 py-3 rounded-md font-medium transition-all duration-300"
+                :class="activeTab === 'download' ? 'bg-[#2501ec] text-white' : 'text-gray-600 hover:text-gray-800'"
+              >
+                📥 Ladda ner
+              </button>
+            </div>
+          </div>
+          
+          <!-- Gallery Tab Content -->
+          <div v-if="activeTab === 'gallery'">
+            <!-- Loading State -->
+            <div v-if="loading" class="text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
             <p class="mt-4 text-gray-700">Laddar bilder...</p>
             <div class="mt-4 flex justify-center">
@@ -116,7 +156,17 @@
                 :class="getGridClass(index)"
                 @click="openImageViewer(index)"
               >
+                <video 
+                  v-if="image.originalData.mimeType.startsWith('video/')"
+                  :src="image.url"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  muted
+                  loop
+                  @mouseenter="$event.target.play()"
+                  @mouseleave="$event.target.pause()"
+                />
                 <img 
+                  v-else
                   :src="image.url" 
                   :alt="image.alt"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -140,6 +190,102 @@
               </button>
             </div>
           </div>
+          </div>
+
+          <!-- Download Tab Content -->
+          <div v-else-if="activeTab === 'download'">
+            <!-- Download Controls -->
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-600">
+                  {{ selectedForDownload.length }} av {{ allImagesForSelection.length }} valda
+                </span>
+              </div>
+              <button
+                @click="downloadSelected"
+                :disabled="selectedForDownload.length === 0"
+                class="bg-[#2501ec] text-white px-6 py-2 rounded-lg hover:bg-[#1e01b8] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                📦 Ladda ner som ZIP ({{ selectedForDownload.length }})
+              </button>
+            </div>
+
+            <!-- Download List View -->
+            <div class="bg-white border border-gray-300">
+              <!-- List Header -->
+              <div class="grid grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-300 font-semibold text-gray-700">
+                <div class="col-span-1 flex justify-center">
+                  <input
+                    ref="masterCheckboxRef"
+                    type="checkbox"
+                    :checked="masterCheckboxState.checked"
+                    @change="toggleSelectAll"
+                    class="w-5 h-5 text-[#2501ec] bg-white border-2 border-gray-300 focus:ring-[#2501ec] focus:ring-2"
+                    title="Välj/avmarkera alla"
+                  />
+                </div>
+                <div class="col-span-1 text-center">Typ</div>
+                <div class="col-span-6">Filnamn</div>
+                <div class="col-span-2">Datum</div>
+                <div class="col-span-2 text-center">Förhandsgranska</div>
+              </div>
+
+              <!-- List Items -->
+              <div 
+                v-for="(image, index) in galleryImages" 
+                :key="image.id"
+                class="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors"
+              >
+                <!-- Checkbox -->
+                <div class="col-span-1 flex justify-center">
+                  <input
+                    type="checkbox"
+                    :value="image.id"
+                    v-model="selectedForDownload"
+                    class="w-5 h-5 text-[#2501ec] bg-white border-2 border-gray-300 focus:ring-[#2501ec] focus:ring-2"
+                  />
+                </div>
+
+                <!-- File Type Icon -->
+                <div class="col-span-1 flex justify-center items-center">
+                  <span class="text-lg">
+                    {{ image.originalData.mimeType.startsWith('video/') ? '🎬' : '📸' }}
+                  </span>
+                </div>
+
+                <!-- File Name -->
+                <div class="col-span-6 flex items-center">
+                  <span class="text-gray-900 font-medium truncate">{{ image.alt }}</span>
+                </div>
+
+                <!-- Date -->
+                <div class="col-span-2 flex items-center">
+                  <span class="text-gray-600 text-sm">{{ image.date }}</span>
+                </div>
+
+                <!-- Preview Button -->
+                <div class="col-span-2 flex justify-center">
+                  <button
+                    @click="openImageViewer(index)"
+                    class="p-2 border border-gray-300 hover:shadow-md text-gray-700 hover:text-gray-900 transition-all"
+                    title="Förhandsgranska"
+                  >
+                    👁️
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Load More for Download Tab -->
+            <div v-if="hasMoreImages" class="text-center mt-8">
+              <button
+                @click="loadMoreImages"
+                class="bg-[#2501ec] text-white px-8 py-3 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
+              >
+                Ladda fler filer
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -158,9 +304,19 @@
         class="relative bg-white p-6 rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col"
         @click.stop
       >
-        <!-- Image Container -->
+        <!-- Media Container -->
         <div class="flex-1 flex items-center justify-center min-h-0 overflow-hidden">
+          <video 
+            v-if="currentImage.originalData && currentImage.originalData.mimeType.startsWith('video/')"
+            :src="currentImage.url"
+            class="max-w-full max-h-full object-contain"
+            style="max-height: calc(90vh - 120px);"
+            controls
+            autoplay
+            loop
+          />
           <img 
+            v-else
             :src="currentImage.url" 
             :alt="currentImage.alt"
             class="max-w-full max-h-full object-contain"
@@ -362,16 +518,16 @@
                 </div>
                 <div>
                   <p class="text-lg font-medium text-gray-700">
-                    Släpp era bilder här eller klicka för att bläddra
+                    Släpp era bilder/videos här eller klicka för att bläddra
                   </p>
                   <p class="text-sm text-gray-500 mt-2">
-                    Stöder JPG, PNG, GIF upp till 10MB
+                    Stöder JPG, PNG, GIF, MP4, MOV upp till 100MB
                   </p>
                   <p class="text-xs text-gray-400 mt-1">
                     Bilder komprimeras automatiskt för optimal kvalitet
                   </p>
                   <p class="text-xs text-gray-400 mt-1">
-                    Max 20 bilder åt gången
+                    Max 500 filer åt gången
                   </p>
                 </div>
               </div>
@@ -382,7 +538,7 @@
               ref="fileInput"
               type="file"
               multiple
-              accept="image/*"
+              accept="image/*,video/*"
               class="hidden"
               @change="handleFileSelect"
             />
@@ -394,7 +550,7 @@
                 class="w-full bg-[#2501ec] text-white py-3 px-6 font-medium hover:bg-[#1e01b8] transition-colors rounded-lg"
                 :disabled="uploading"
               >
-                Ladda upp {{ selectedFiles.length }} bild{{ selectedFiles.length > 1 ? 'er' : '' }}
+                Ladda upp {{ selectedFiles.length }} fil{{ selectedFiles.length > 1 ? 'er' : '' }}
               </button>
             </div>
 
@@ -420,7 +576,14 @@
                   :key="index"
                   class="relative group"
                 >
+                  <video 
+                    v-if="file.type.startsWith('video/')"
+                    :src="getFilePreview(file)"
+                    class="w-full h-32 object-cover"
+                    muted
+                  />
                   <img 
+                    v-else
                     :src="getFilePreview(file)" 
                     :alt="file.name"
                     class="w-full h-32 object-cover"
@@ -443,10 +606,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const { $gcs } = useNuxtApp()
 const gcs = $gcs
+
+// Tab state
+const activeTab = ref('gallery')
 
 // Modal state
 const showUploadModal = ref(false)
@@ -456,9 +622,36 @@ const isDragOver = ref(false)
 const deleting = ref(false)
 const deleteCompleted = ref(false)
 
+// Download state
+const selectedForDownload = ref([])
+const allImagesForSelection = ref([]) // Store all images across pages for "select all"
+const isSelectingAll = ref(false)
+const masterCheckboxRef = ref(null)
+
 // Image viewer state
 const currentImageIndex = ref(0)
 const currentImage = computed(() => galleryImages.value[currentImageIndex.value] || {})
+
+// Master checkbox state
+const masterCheckboxState = computed(() => {
+  const totalFiles = allImagesForSelection.value.length
+  const selectedCount = selectedForDownload.value.length
+  
+  if (selectedCount === 0) {
+    return { checked: false, indeterminate: false }
+  } else if (selectedCount === totalFiles) {
+    return { checked: true, indeterminate: false }
+  } else {
+    return { checked: false, indeterminate: true }
+  }
+})
+
+// Watch for changes to set indeterminate state properly
+watch(masterCheckboxState, (newState) => {
+  if (masterCheckboxRef.value) {
+    masterCheckboxRef.value.indeterminate = newState.indeterminate
+  }
+}, { immediate: true })
 
 // Upload state
 const selectedFiles = ref([])
@@ -582,6 +775,12 @@ const fetchImages = async (page = 1, append = false) => {
       // Append to existing images
       galleryImages.value = [...galleryImages.value, ...transformedImages]
       allImages.value = [...allImages.value, ...transformedImages]
+    }
+
+    // Update allImagesForSelection for download functionality
+    if (page === 1) {
+      // For first page, also fetch all images for selection purposes
+      await fetchAllImagesForSelection()
     }
 
     // Check if there are more images to load
@@ -728,14 +927,16 @@ const handleDrop = (event) => {
 
 // Add files to selection
 const addFiles = (files) => {
-  const imageFiles = files.filter(file => file.type.startsWith('image/'))
+  const mediaFiles = files.filter(file => 
+    file.type.startsWith('image/') || file.type.startsWith('video/')
+  )
   
-  // Limit to 20 images
-  const remainingSlots = 20 - selectedFiles.value.length
-  const filesToAdd = imageFiles.slice(0, remainingSlots)
+  // Limit to 500 files
+  const remainingSlots = 500 - selectedFiles.value.length
+  const filesToAdd = mediaFiles.slice(0, remainingSlots)
   
-  if (filesToAdd.length < imageFiles.length) {
-    alert(`Du kan bara ladda upp 20 bilder åt gången. ${imageFiles.length - filesToAdd.length} bilder har ignorerats.`)
+  if (filesToAdd.length < mediaFiles.length) {
+    alert(`Du kan bara ladda upp 500 filer åt gången. ${mediaFiles.length - filesToAdd.length} filer har ignorerats.`)
   }
   
   selectedFiles.value.push(...filesToAdd)
@@ -797,7 +998,7 @@ const getFilePreview = (file) => {
   return URL.createObjectURL(file)
 }
 
-// Upload images to Google Cloud Storage
+// Upload images and videos to Google Cloud Storage
 const uploadImages = async () => {
   if (selectedFiles.value.length === 0) return
 
@@ -808,16 +1009,20 @@ const uploadImages = async () => {
     for (let i = 0; i < selectedFiles.value.length; i++) {
       const file = selectedFiles.value[i]
       
-      // Compress image before upload
-      const compressedFile = await compressImage(file)
+      let fileToUpload = file
+      
+      // Only compress images, not videos
+      if (file.type.startsWith('image/')) {
+        fileToUpload = await compressImage(file)
+      }
       
       // Generate unique filename
-      const fileExt = compressedFile.name.split('.').pop()
+      const fileExt = fileToUpload.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
 
       try {
         // Upload to Google Cloud Storage
-        const publicUrl = await gcs.uploadFile(compressedFile, fileName)
+        const publicUrl = await gcs.uploadFile(fileToUpload, fileName)
 
         console.log(`Successfully uploaded: ${fileName}`)
 
@@ -844,6 +1049,89 @@ const uploadImages = async () => {
     alert('Uppladdning misslyckades. Försök igen.')
   } finally {
     uploading.value = false
+  }
+}
+
+// Fetch all images for selection purposes
+const fetchAllImagesForSelection = async () => {
+  try {
+    // Fetch all images in one call for selection purposes
+    const response = await $fetch('/api/gcs/list', {
+      query: {
+        page: 1,
+        limit: 10000 // Large number to get all
+      }
+    })
+
+    if (response.success) {
+      allImagesForSelection.value = response.data.images.map((image) => ({
+        id: image.id,
+        url: image.url,
+        alt: image.alt,
+        title: image.title || '',
+        date: image.date,
+        originalData: image
+      }))
+    }
+  } catch (error) {
+    console.error('Error fetching all images for selection:', error)
+  }
+}
+
+// Download functions
+const selectAll = () => {
+  isSelectingAll.value = true
+  selectedForDownload.value = allImagesForSelection.value.map(img => img.id)
+}
+
+const deselectAll = () => {
+  isSelectingAll.value = false
+  selectedForDownload.value = []
+}
+
+const toggleSelectAll = () => {
+  if (selectedForDownload.value.length === allImagesForSelection.value.length) {
+    // All selected, so deselect all
+    deselectAll()
+  } else {
+    // Some or none selected, so select all
+    selectAll()
+  }
+}
+
+const downloadSelected = async () => {
+  if (selectedForDownload.value.length === 0) return
+
+  try {
+    // Create zip download
+    const response = await fetch('/api/gcs/download-zip', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fileIds: selectedForDownload.value
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Download failed')
+    }
+
+    // Create blob and download
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `wedding-photos-${Date.now()}.zip`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+
+  } catch (error) {
+    console.error('Zip download failed:', error)
+    alert('Nedladdning misslyckades. Försök igen.')
   }
 }
 </script>

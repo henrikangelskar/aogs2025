@@ -21,10 +21,10 @@ export default defineEventHandler(async (event) => {
     })
 
     // Transform files to the format expected by the gallery
-    const imageFiles = files
+    const mediaFiles = files
       .filter(file => {
         const mimeType = file.metadata?.contentType || ''
-        return mimeType.startsWith('image/')
+        return mimeType.startsWith('image/') || mimeType.startsWith('video/')
       })
       .map(file => {
         // Extract timestamp from filename if it exists (TIMESTAMP-randomstring.ext)
@@ -50,14 +50,14 @@ export default defineEventHandler(async (event) => {
     // Implement pagination
     const startIndex = (page - 1) * limit
     const endIndex = startIndex + limit
-    const paginatedImages = imageFiles.slice(startIndex, endIndex)
+    const paginatedMedia = mediaFiles.slice(startIndex, endIndex)
     
     return {
       success: true,
       data: {
-        images: paginatedImages,
-        totalCount: imageFiles.length,
-        hasMore: endIndex < imageFiles.length,
+        images: paginatedMedia,
+        totalCount: mediaFiles.length,
+        hasMore: endIndex < mediaFiles.length,
         page,
         limit
       }

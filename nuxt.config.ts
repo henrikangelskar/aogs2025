@@ -27,6 +27,7 @@ export default defineNuxtConfig({
     googleCloudProjectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
     googleCloudBucketName: process.env.GOOGLE_CLOUD_BUCKET_NAME,
     googleApplicationCredentialsJson: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
+    maxGcsTotalBytes: process.env.GCS_MAX_TOTAL_BYTES,
     public: {
       googleCloudBucketName: process.env.GOOGLE_CLOUD_BUCKET_NAME,
       supabaseUrl: process.env.SUPABASE_URL || 'https://ddndffgkzzuedtuzhijm.supabase.co',
