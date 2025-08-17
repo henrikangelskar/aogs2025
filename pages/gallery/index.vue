@@ -588,7 +588,6 @@
               type="file"
               multiple
               accept="image/*,video/*"
-              capture="environment"
               class="hidden"
               @change="handleFileSelect"
             />
