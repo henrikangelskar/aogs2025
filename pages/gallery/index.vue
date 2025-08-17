@@ -548,9 +548,8 @@
               @drop.prevent="handleDrop"
               @dragover.prevent
               @dragenter.prevent
-              @click="openFileSelector"
-              @touchstart="openFileSelector"
-              class="border-2 border-dashed border-gray-300 p-8 text-center hover:border-gray-400 transition-colors cursor-pointer touch-manipulation"
+              @click="$refs.fileInput.click()"
+              class="border-2 border-dashed border-gray-300 p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
               :class="{ 'border-gray-400 bg-gray-50': isDragOver }"
             >
               <div class="space-y-4">
@@ -564,8 +563,8 @@
                   
                   <!-- Mobile-friendly button -->
                   <button
-                    @click.stop="openFileSelector"
-                    class="bg-[#2501ec] text-white px-6 py-3 font-medium border border-gray-300 hover:shadow-md transition-all mb-4 touch-manipulation"
+                    @click.stop="$refs.fileInput.click()"
+                    class="bg-[#2501ec] text-white px-6 py-3 font-medium border border-gray-300 hover:shadow-md transition-all mb-4"
                   >
                     📱 Välj filer
                   </button>
@@ -1003,20 +1002,6 @@ const closeDeleteSuccess = () => {
 }
 
 
-
-// Open file selector
-const openFileSelector = (event) => {
-  // Prevent any default behavior
-  event.preventDefault()
-  event.stopPropagation()
-  
-  // For mobile, add a small delay to ensure the event is processed
-  setTimeout(() => {
-    if (fileInput.value) {
-      fileInput.value.click()
-    }
-  }, 10)
-}
 
 // Handle file selection
 const handleFileSelect = (event) => {
