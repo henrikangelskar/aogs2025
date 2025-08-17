@@ -567,18 +567,57 @@
 
             <!-- Selected Files Preview -->
             <div v-if="selectedFiles.length > 0" class="mt-6">
-              <h3 class="text-lg font-medium text-gray-800 mb-4">Valda filer:</h3>
+              <h3 class="text-lg font-medium text-gray-800 mb-4">Valda filer ({{ selectedFiles.length }}):</h3>
               <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div 
                   v-for="(file, index) in selectedFiles" 
                   :key="index"
-                  class="relative group"
+                  class="relative group border border-gray-200 rounded-lg overflow-hidden"
                 >
+                  <!-- Compression Progress Overlay -->
+                  <div 
+                    v-if="fileUploadStatus[index]?.compressing"
+                    class="absolute inset-0 bg-blue-500 bg-opacity-50 flex items-center justify-center z-10"
+                  >
+                    <div class="text-center text-white">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                      <p class="text-xs">Komprimerar...</p>
+                    </div>
+                  </div>
+
+                  <!-- Upload Progress Overlay -->
+                  <div 
+                    v-else-if="fileUploadStatus[index]?.uploading"
+                    class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10"
+                  >
+                    <div class="text-center text-white">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                      <p class="text-xs">Laddar upp...</p>
+                    </div>
+                  </div>
+
+                  <!-- Success Overlay -->
+                  <div 
+                    v-else-if="fileUploadStatus[index]?.completed"
+                    class="absolute inset-0 bg-green-500 bg-opacity-20 flex items-center justify-center z-10"
+                  >
+                    <div class="text-green-600 text-2xl">✓</div>
+                  </div>
+
+                  <!-- Error Overlay -->
+                  <div 
+                    v-else-if="fileUploadStatus[index]?.error"
+                    class="absolute inset-0 bg-red-500 bg-opacity-20 flex items-center justify-center z-10"
+                  >
+                    <div class="text-red-600 text-2xl">✗</div>
+                  </div>
+
                   <video 
                     v-if="file.type.startsWith('video/')"
                     :src="getFilePreview(file)"
                     class="w-full h-32 object-cover"
                     muted
+                    preload="metadata"
                   />
                   <img 
                     v-else
@@ -586,13 +625,22 @@
                     :alt="file.name"
                     class="w-full h-32 object-cover"
                   />
+                  
+                  <!-- Remove button (only show if not uploading) -->
                   <button
+                    v-if="!uploading"
                     @click="removeFile(index)"
-                    class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition-colors"
+                    class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition-colors rounded-full"
                   >
                     ×
                   </button>
-                  <p class="text-xs text-gray-600 mt-1 truncate">{{ file.name }}</p>
+                  
+                  <div class="p-2 bg-white">
+                    <p class="text-xs text-gray-600 truncate">{{ file.name }}</p>
+                    <p class="text-xs text-gray-400">
+                      {{ file.type.startsWith('video/') ? 'Video' : 'Bild' }} - {{ formatFileSize(file.size) }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -656,6 +704,7 @@ const selectedFiles = ref([])
 const uploading = ref(false)
 const uploadCompleted = ref(false)
 const uploadProgress = ref(0)
+const fileUploadStatus = ref({})
 
 // File input ref
 const fileInput = ref(null)
@@ -841,6 +890,7 @@ const closeUploadModal = () => {
   uploadProgress.value = 0
   uploading.value = false
   uploadCompleted.value = false
+  fileUploadStatus.value = {}
 }
 
 // Image viewer functions
@@ -1001,6 +1051,145 @@ const compressImage = (file) => {
   })
 }
 
+// Compress video to reasonable size
+const compressVideo = (file) => {
+  return new Promise((resolve) => {
+    // For now, we'll implement a simple approach
+    // Check if the file is larger than 50MB, if so, we'll try to compress
+    const maxSize = 50 * 1024 * 1024 // 50MB
+    
+    if (file.size <= maxSize) {
+      // File is already small enough
+      resolve(file)
+      return
+    }
+    
+    // Try to use MediaRecorder API for compression
+    try {
+      const video = document.createElement('video')
+      video.src = URL.createObjectURL(file)
+      video.muted = true
+      
+      video.onloadedmetadata = () => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        
+        // Reduce dimensions if too large
+        let { videoWidth, videoHeight } = video
+        const maxDimension = 1280
+        
+        if (videoWidth > maxDimension || videoHeight > maxDimension) {
+          if (videoWidth > videoHeight) {
+            videoHeight = (videoHeight * maxDimension) / videoWidth
+            videoWidth = maxDimension
+          } else {
+            videoWidth = (videoWidth * maxDimension) / videoHeight
+            videoHeight = maxDimension
+          }
+        }
+        
+        canvas.width = videoWidth
+        canvas.height = videoHeight
+        
+        // Create a MediaRecorder with lower bitrate
+        const stream = canvas.captureStream(25) // 25 FPS
+        
+        let mediaRecorder
+        try {
+          // Try different formats in order of preference
+          if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+            mediaRecorder = new MediaRecorder(stream, {
+              mimeType: 'video/webm;codecs=vp9',
+              videoBitsPerSecond: 800000 // 800 kbps
+            })
+          } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+            mediaRecorder = new MediaRecorder(stream, {
+              mimeType: 'video/webm;codecs=vp8',
+              videoBitsPerSecond: 800000
+            })
+          } else if (MediaRecorder.isTypeSupported('video/webm')) {
+            mediaRecorder = new MediaRecorder(stream, {
+              mimeType: 'video/webm',
+              videoBitsPerSecond: 800000
+            })
+          } else {
+            // MediaRecorder not supported or no compatible format
+            resolve(file)
+            return
+          }
+        } catch (error) {
+          console.log('MediaRecorder not supported:', error)
+          resolve(file)
+          return
+        }
+        
+        const chunks = []
+        
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            chunks.push(event.data)
+          }
+        }
+        
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: mediaRecorder.mimeType })
+          
+          // Only use compressed version if it's actually smaller
+          if (blob.size < file.size) {
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.webm'), {
+              type: blob.type,
+              lastModified: Date.now()
+            })
+            resolve(compressedFile)
+          } else {
+            // Compression didn't help, use original
+            resolve(file)
+          }
+        }
+        
+        mediaRecorder.onerror = () => {
+          resolve(file)
+        }
+        
+        // Start recording
+        mediaRecorder.start()
+        
+        // Play video and draw frames
+        video.currentTime = 0
+        video.play()
+        
+        const drawFrame = () => {
+          if (!video.ended && !video.paused) {
+            ctx.drawImage(video, 0, 0, videoWidth, videoHeight)
+            requestAnimationFrame(drawFrame)
+          } else {
+            mediaRecorder.stop()
+          }
+        }
+        
+        video.onplay = () => {
+          drawFrame()
+        }
+        
+        // Set a maximum recording time (30 seconds for safety)
+        setTimeout(() => {
+          if (mediaRecorder.state === 'recording') {
+            mediaRecorder.stop()
+          }
+        }, 30000)
+      }
+      
+      video.onerror = () => {
+        resolve(file)
+      }
+      
+    } catch (error) {
+      console.log('Video compression failed:', error)
+      resolve(file)
+    }
+  })
+}
+
 // Remove file from selection
 const removeFile = (index) => {
   selectedFiles.value.splice(index, 1)
@@ -1011,48 +1200,76 @@ const getFilePreview = (file) => {
   return URL.createObjectURL(file)
 }
 
+// Format file size
+const formatFileSize = (bytes) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
 // Upload images and videos to Google Cloud Storage
 const uploadImages = async () => {
   if (selectedFiles.value.length === 0) return
 
   uploading.value = true
   uploadProgress.value = 0
+  fileUploadStatus.value = {}
 
   try {
     for (let i = 0; i < selectedFiles.value.length; i++) {
       const file = selectedFiles.value[i]
       
+      // Set file as uploading
+      fileUploadStatus.value[i] = { uploading: true }
+      
       let fileToUpload = file
       
-      // Only compress images, not videos
-      if (file.type.startsWith('image/')) {
-        fileToUpload = await compressImage(file)
-      }
-      
-      // Generate unique filename
-      const fileExt = fileToUpload.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-
       try {
+        // Show compression status
+        fileUploadStatus.value[i] = { compressing: true }
+        
+        // Compress files based on type
+        if (file.type.startsWith('image/')) {
+          fileToUpload = await compressImage(file)
+        } else if (file.type.startsWith('video/')) {
+          fileToUpload = await compressVideo(file)
+        }
+        
+        // Show upload status
+        fileUploadStatus.value[i] = { uploading: true }
+        
+        // Generate unique filename
+        const fileExt = fileToUpload.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+
         // Upload to Google Cloud Storage
         const publicUrl = await gcs.uploadFile(fileToUpload, fileName)
 
+        // Mark file as completed
+        fileUploadStatus.value[i] = { completed: true }
         console.log(`Successfully uploaded: ${fileName}`)
 
       } catch (uploadError) {
+        // Mark file as error
+        fileUploadStatus.value[i] = { error: true }
         console.error('Upload error:', uploadError)
-        continue
       }
 
       // Update progress
       uploadProgress.value = ((i + 1) / selectedFiles.value.length) * 100
     }
 
+    // Wait a moment to show completion state
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
     // Clear selection after successful upload
     selectedFiles.value = []
     uploadProgress.value = 0
     uploading.value = false
     uploadCompleted.value = true
+    fileUploadStatus.value = {}
     
     // Refresh the gallery with new images
     await fetchImages()
